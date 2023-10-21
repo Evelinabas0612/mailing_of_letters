@@ -5,15 +5,11 @@ from mailing.models import MailingSettings, Mail, Client, Logs
 
 @admin.register(MailingSettings)
 class MailingSettingsAdmin(admin.ModelAdmin):
-    list_display = ('time', 'period', 'status')
-    list_filter = ('time',)
-    search_fields = ('status',)
+    list_display = ('status',
+                    'topic_mail', 'body_mail',)
+    list_filter = ('status',)
 
 
-@admin.register(Mail)
-class MailAdmin(admin.ModelAdmin):
-    list_display = ('topic_mail', 'body_mail')
-    search_fields = ('topic_mail',)
 
 
 @admin.register(Client)
@@ -23,6 +19,9 @@ class ClientAdmin(admin.ModelAdmin):
 
 @admin.register(Logs)
 class LogsAdmin(admin.ModelAdmin):
-    list_display = ('status_send',)
+    list_display = ('mailing', 'status_send', 'last_attempt_send',)
+
+
+
 
 

@@ -1,0 +1,27 @@
+﻿[
+  {
+    "model": "auth.group",
+    "pk": 1,
+    "fields": {
+      "name": "менеджер",
+      "permissions": [
+        2,
+        26,
+        28,
+        36
+      ]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 2,
+    "fields": {
+      "name": "блогер",
+      "permissions": [
+        39,
+        40,
+        41
+      ]
+    }
+  }
+]

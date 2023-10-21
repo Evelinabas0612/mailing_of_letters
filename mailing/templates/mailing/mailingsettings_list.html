@@ -1,0 +1,66 @@
+{% extends 'mailing/base.html' %}
+{% load auth_extras %}
+{% block content %}
+<div class="col-12 mb-2">
+{% if user.is_authenticated %}
+    <a class="btn btn-outline-primary" href="{% url 'mailing:create_mailing' %}">
+        Добавить рассылку
+    </a>
+{% endif %}
+</div>
+
+<div class="pricing-header px-3 py-1 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">Сервис рассылок</h1>
+    <h6 class="display-6">
+        Cервис для создания рассылок
+        Рассылка ежедневно, еженедельно или ежемесячно!
+    </h6>
+</div>
+
+{% if not user.is_authenticated %}
+ <div class="display-4"><h3>Статистика рассылок:</h3></div>
+
+<p>Количество рассылок: {{ object_list|length }}</p>
+<p>Количество активных рассылок: {{ count_active_mailing }}</p>
+<p>Количество клиентов для рассылок: {{ clients_count }}</p>
+
+{% endif %}
+
+<div class="text-center px-3 py-4">
+    <h5>Блог</h5>
+    {% for object in blog_list|slice:":3" %}
+    <a href="{% url 'blog:view' object.pk %}" class="card-link">{{ object.title }}</a>
+    {% endfor %}
+</div>
+
+<div class="container">
+    <div class="row text-center">
+        {% for object in object_list %}
+         {% if object.user == user or user.is_superuser == True or user|has_group:"менеджер" %}
+        <div class="col-3">
+            <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <h4 class="my-0 font-weight-normal">{{ object.topic_mail | title }}</h4>
+                </div>
+                <div class="card-body">
+                    <h1 class="card-title pricing-card-title"></h1>
+                    <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                        <li>{{ object.body_mail| slice:100 }}...</li>
+                    </ul>
+                    <p><a class="btn btn-secondary" href="{% url 'mailing:mailing_detail' object.pk %}"
+                          role="button">Подробнеe&raquo;</a></p>
+                    <p><a href="{% url 'mailing:update_mailing' object.pk %}" type="button" class="btn btn-success">Редактировать</a>
+                    </p>
+                    {% endif %}
+                    {% if object.user == user or user.is_superuser == True %}
+
+                    <p><a href="{% url 'mailing:delete_mailing' object.pk %}" type="button" class="btn btn-danger">Удалить</a>
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

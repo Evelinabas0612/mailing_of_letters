@@ -1,0 +1,40 @@
+{% extends 'mailing/base.html' %}
+{% block content %}
+
+<div class="col-12">
+    <div class="row">
+        <div class="col -6">
+
+            <div class="card mb-4 box-shadow">
+                <div class="card-body">
+                    <div class="title md-5">
+                        <h4>Карточка клиента</h4>
+                    </div>
+                    <table class="table table-striped">
+                        <tr>
+                            <td class="w-25">ФИО:</td>
+                            {% if object.name == None %}
+                            <td>Не указано</td>
+                            {% else %}
+                            <td>{{ object.name }}</td>
+                            {% endif %}
+                        </tr>
+
+                        <tr>
+                            <td class="w-25">Почта:</td>
+                            <td>{{ object.email }}</td>
+                        </tr>
+                        <tr>
+                            <td class="w-25">Комментарий:</td>
+                            <td>{{ object.comment }}</td>
+                        </tr>
+
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<a href="#" onclick="history.back();" >Назад</a>
+{% endblock %}

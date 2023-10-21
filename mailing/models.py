@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 
 from config import settings
@@ -8,10 +10,10 @@ NULLABLE = {'blank': True, 'null': True}
 class Client(models.Model):
     """Клиент сервиса"""
     email = models.EmailField(unique=True, verbose_name='Почта')
-    name = models.CharField(max_length=150, verbose_name='Фамилия Имя Отчество')
+    name = models.CharField(max_length=150, verbose_name='Фамилия Имя Отчество', **NULLABLE)
     comment = models.TextField(verbose_name='Комментарий', **NULLABLE)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, **NULLABLE)
-    is_active = models.BooleanField(default=True, verbose_name='Активность')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, **NULLABLE)
+
 
     def __str__(self):
         return f"{self.name} ({self.email})"
@@ -20,10 +22,6 @@ class Client(models.Model):
         verbose_name = 'Клиент'
         verbose_name_plural = 'Клиенты'
 
-    def delete(self, *args, **kwargs):
-        """Функция, делающая клиента не активным"""
-        self.is_active = False
-        self.save()
 
 
 class Mail(models.Model):
@@ -65,35 +63,37 @@ class MailingSettings(models.Model):
     period = models.CharField(max_length=20, choices=PERIODS, verbose_name='Периодичность рассылки',
                               default=PERIOD_DAILY)
     status = models.CharField(max_length=20, choices=STATUSES, verbose_name='Статус рассылки', default=STATUS_CREATED)
-    time = models.TimeField(auto_now_add=True, verbose_name="Время отправки")
-    client = models.ManyToManyField(Client, verbose_name='Клиент', **NULLABLE)
-    mail = models.ForeignKey(Mail, on_delete=models.SET_NULL, verbose_name='Сообщение', **NULLABLE)
+    time = models.TimeField(default=datetime.now, verbose_name="Время отправки")
+    clients = models.ManyToManyField(Client, verbose_name='Клиент', **NULLABLE)
+    day = models.DateField(default=datetime.today, verbose_name='Дата начала')
+    topic_mail = models.CharField(default='',max_length=100, verbose_name='Тема письма')
+    body_mail = models.CharField(default='', max_length=100, verbose_name='Тело письма')
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, **NULLABLE)
-    is_published = models.BooleanField(default=True, verbose_name='Опубликован')
 
     def __str__(self):
-        return f"{self.period} {self.status} {self.time}"
+        return (f'{self.period} {self.status} {self.time},'
+                f'{self.topic_mail} {self.body_mail}'
+                f'{self.clients}')
 
     class Meta:
         verbose_name = 'Рассылка'
         verbose_name_plural = 'Рассылки'
 
-    def delete(self, *args, **kwargs):
-        """Функция, делающая пост не активным"""
-        self.is_published = False
-        self.status = 'FINISH'
-        self.save()
+    permissions = [
+        ('set_status', 'Can change mailing status')
+    ]
 
 
 class Logs(models.Model):
     """Логи рассылки"""
 
     last_attempt_send = models.DateTimeField(default=None, verbose_name="Дата и время последней попытки")
-    status_send = models.BooleanField(default=False, verbose_name='Статус попытки')
+    status_send = models.CharField(max_length=150, verbose_name='Статус попытки')
     mailing = models.ForeignKey('MailingSettings', on_delete=models.CASCADE,
                                 verbose_name='Рассылка,которая отправлялась')
 
-    last_attempt_response = models.CharField(max_length=150, **NULLABLE, verbose_name='ответ почтового сервера')
+    last_attempt_response = models.CharField(max_length=150, **NULLABLE, verbose_name='Ответ почтового сервера')
 
     def __str__(self):
         return (f'{self.last_attempt_send} {self.status_send}'

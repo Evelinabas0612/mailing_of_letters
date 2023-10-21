@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
     'mailing',
     'users',
+    'blog',
     'django_apscheduler',
 ]
 
@@ -144,7 +145,7 @@ LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 LOGIN_URL = '/users/'
 
-
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = '465'
 EMAIL_USE_TLS = False
@@ -156,7 +157,7 @@ SCHEDULER_AUTOSTART = True
 
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a" #Default
 
-APSCHEDULER_RUN_NOW_TIMEOUT = 25
+#APSCHEDULER_RUN_NOW_TIMEOUT = 25
 
 CACHE_ENABLED = os.getenv('CACHE_ENABLED') == '1'
 
