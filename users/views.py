@@ -18,7 +18,7 @@ from users.service import send_new_password
 
 
 # Create your views here.
-class RegisterView(LoginRequiredMixin, CreateView):
+class RegisterView(CreateView, LoginRequiredMixin):
     model = User
     form_class = UserRegisterForm
     template_name = 'users/register.html'
@@ -42,7 +42,7 @@ class RegisterView(LoginRequiredMixin, CreateView):
         return redirect('users:email_confirmation_sent')
 
 
-class UserConfirmEmailView(LoginRequiredMixin, View):
+class UserConfirmEmailView(View, LoginRequiredMixin):
     def get(self, request, token):
         try:
             user = User.objects.get(token=token)
@@ -55,7 +55,7 @@ class UserConfirmEmailView(LoginRequiredMixin, View):
         return redirect('users:login')
 
 
-class EmailConfirmationSentView(LoginRequiredMixin, TemplateView):
+class EmailConfirmationSentView(TemplateView,LoginRequiredMixin):
     template_name = 'users/email_confirmation_sent.html'
 
     def get_context_data(self, **kwargs):
@@ -64,7 +64,7 @@ class EmailConfirmationSentView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class EmailConfirmView(LoginRequiredMixin, TemplateView):
+class EmailConfirmView(TemplateView, LoginRequiredMixin):
     template_name = 'users/email_verified.html'
 
     def get_context_data(self, **kwargs):
@@ -73,7 +73,7 @@ class EmailConfirmView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class EmailConfirmationFailedView(LoginRequiredMixin,TemplateView):
+class EmailConfirmationFailedView(TemplateView, LoginRequiredMixin):
     """Ошибка подтверждения по электронной почте"""
     template_name = 'users/email_confirmation_failed.html'
 
@@ -83,7 +83,7 @@ class EmailConfirmationFailedView(LoginRequiredMixin,TemplateView):
         return context
 
 
-class ProfileView(LoginRequiredMixin, UpdateView):
+class ProfileView(UpdateView, LoginRequiredMixin):
     model = User
     form_class = UserProfileForm
     success_url = reverse_lazy('users:profile')
@@ -115,7 +115,7 @@ def generate_new_password(request):
     return redirect(reverse('mailing:list'))
 
 
-class UserForgotPasswordView(LoginRequiredMixin, SuccessMessageMixin, PasswordResetView):
+class UserForgotPasswordView(PasswordResetView, LoginRequiredMixin, SuccessMessageMixin):
     """Представление по сбросу пароля по почте"""
     form_class = UserForgotPasswordForm
     template_name = 'users/user_password_reset.html'
@@ -130,8 +130,8 @@ class UserForgotPasswordView(LoginRequiredMixin, SuccessMessageMixin, PasswordRe
         return context
 
 
-class UserPasswordResetConfirmView(LoginRequiredMixin,
-                                   SuccessMessageMixin, PasswordResetConfirmView):
+class UserPasswordResetConfirmView(PasswordResetConfirmView, LoginRequiredMixin,
+                                   SuccessMessageMixin):
     """Представление установки нового пароля"""
     form_class = UserSetNewPasswordForm
     template_name = 'users/user_password_set_new.html'

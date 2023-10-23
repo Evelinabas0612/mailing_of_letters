@@ -13,7 +13,7 @@ class User(AbstractUser):
     phone = models.CharField(max_length=35, verbose_name='телефон', **NULLABLE)
     #avatar = models.ImageField(upload_to='users/', verbose_name='аватар', **NULLABLE)
 
-    country = models.CharField(verbose_name='страна', **NULLABLE)
+    country = models.CharField(max_length=100, verbose_name='страна', **NULLABLE)
     email_verify = models.BooleanField(default=False)
     # token = models.CharField(max_length=200, verbose_name='токен', **NULLABLE)
     # created_at = models.DateTimeField(auto_now_add=True, verbose_name='время создания токена', **NULLABLE)
