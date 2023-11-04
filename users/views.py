@@ -112,7 +112,7 @@ def generate_new_password(request):
     request.user.set_password(new_password)
     request.user.save()
     send_new_password(request.user.email, new_password)
-    return redirect(reverse('mailing:list'))
+    return redirect(reverse('users:login'))
 
 
 class UserForgotPasswordView(PasswordResetView, LoginRequiredMixin, SuccessMessageMixin):

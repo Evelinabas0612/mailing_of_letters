@@ -17,14 +17,14 @@
     </h6>
 </div>
 
-{% if not user.is_authenticated %}
+
  <div class="display-4"><h3>Статистика рассылок:</h3></div>
 
 <p>Количество рассылок: {{ object_list|length }}</p>
 <p>Количество активных рассылок: {{ count_active_mailing }}</p>
 <p>Количество клиентов для рассылок: {{ clients_count }}</p>
 
-{% endif %}
+
 
 <div class="text-center px-3 py-4">
     <h5>Блог</h5>
